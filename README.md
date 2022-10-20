@@ -11,6 +11,8 @@ This repo is for learning quantum open system with deep quantum neural network.
 
 - `DQNN_pennylane.ipynb`: Basic implementation of DQNN with pennylane, proposed in *Beer et al. 2020 <https://doi.org/10.1038/s41467-020-14454-2>*
 - `DQNN_qiskit.ipynb`: Basic implementation of DQNN with qiskit, proposed in *Beer et al. 2020 <https://doi.org/10.1038/s41467-020-14454-2>*
+  - `class OpflowDQNN(object)` is the DQNN that utilizes `qiskit.quantum_info` to construct and update unitaries.
+  - `class CircuitDQNN(object)` is the DQNN that utilizes `qiskit.circuit` to construct channels. TODO: working progress.
 
 ## Published Papers & Preprints
 
