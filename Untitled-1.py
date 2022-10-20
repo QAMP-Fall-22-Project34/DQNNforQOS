@@ -51,11 +51,11 @@ class OpflowDQNN(object):
     def applyLayerChannel(self, unitaries:List[np.ndarray], l:int, inputState:DensityMatrix):
         numInputQubits = self.qnnArch[l]
         numOutputQubits = self.qnnArch[l+1]
-        inputWires = list(range(numOutputQubits, numInputQubits+numOutputQubits))
-        outputWires = list(range(numOutputQubits))
+        inputWires = list(range(numInputQubits))
+        outputWires = list(range(numInputQubits, numInputQubits+numOutputQubits))
         layerUnitaries = unitaries[l]
         # inputState = DensityMatrix(inputState)
-        inputState = inputState.tensor(DensityMatrix.from_int(0, dims=2**numOutputQubits))
+        inputState = inputState.expand(DensityMatrix.from_int(0, dims=2**numOutputQubits))
         # apply layer unitaries
         for j in range(numOutputQubits):
             assert Operator(layerUnitaries[j, :, :]).is_unitary(), f"`unitaries[{l}][{j}, :, :]` is not unitary"
@@ -65,12 +65,12 @@ class OpflowDQNN(object):
     def applyAdjointLayerChannel(self, unitaries:List[np.ndarray], l:int, outputState:DensityMatrix):
         numInputQubits = self.qnnArch[l]
         numOutputQubits = self.qnnArch[l+1]
-        inputWires = list(range(numOutputQubits, numInputQubits+numOutputQubits))
-        outputWires = list(range(numOutputQubits))
+        inputWires = list(range(numInputQubits))
+        outputWires = list(range(numInputQubits, numInputQubits+numOutputQubits))
         layerUnitaries = unitaries[l]
         # outputState = DensityMatrix(outputState)
-        outputState = DensityMatrix(np.eye(2**numInputQubits)).tensor(outputState)
-        projOp = Operator(np.eye(2**numInputQubits)).tensor(DensityMatrix.from_int(0, dims=2**numOutputQubits).to_operator())
+        outputState = DensityMatrix(np.eye(2**numInputQubits)).expand(outputState)
+        projOp = Operator(np.eye(2**numInputQubits)).expand(DensityMatrix.from_int(0, dims=2**numOutputQubits).to_operator())
         # apply adjoing layer unitaries
         for j in range(numOutputQubits-1, -1, -1):
             assert Operator(layerUnitaries[j, :, :]).is_unitary(), f"`unitaries[{l}][{j}, :, :]` is not unitary"
@@ -154,8 +154,8 @@ class OpflowDQNN(object):
             xTrMmatrices = []
             numInputQubits = self.qnnArch[l]
             numOutputQubits = self.qnnArch[l+1]
-            inputWires = list(range(numOutputQubits, numInputQubits+numOutputQubits))
-            outputWires = list(range(numOutputQubits))
+            inputWires = list(range(numInputQubits))
+            outputWires = list(range(numInputQubits, numInputQubits+numOutputQubits))
             layerUnitaries = unitaries[l]
             layerInputStates = feedforward_results[l]
             layerOutputStates = backpropagation_results[l+1]
@@ -164,8 +164,8 @@ class OpflowDQNN(object):
                 Amatrices = deque()
                 Bmatrices = deque()
                 TrMmatrices = list()
-                astate = DensityMatrix(layerInputState).tensor(DensityMatrix.from_int(0, dims=2**numOutputQubits))
-                bstate = DensityMatrix(np.eye(2**numInputQubits)).tensor(DensityMatrix(layerOutputState))
+                astate = DensityMatrix(layerInputState).expand(DensityMatrix.from_int(0, dims=2**numOutputQubits))
+                bstate = DensityMatrix(np.eye(2**numInputQubits)).expand(DensityMatrix(layerOutputState))
                 for j in range(numOutputQubits):
                     astate = astate.evolve(layerUnitaries[j, :, :], qargs=inputWires+[outputWires[j]])
                     Amatrices.append(astate.data)
@@ -258,7 +258,7 @@ def cost(outputs, targets):
 # %%
 if __name__ == "__main__":
     unitary = random_unitary(2**2)
-    model = OpflowDQNN([2, 3, 2], epsilon=0.1, lamda=10)
+    model = OpflowDQNN([2, 3, 2], epsilon=.1, lamda=.1)
     unitaries = model.makeRandomUnitaries()
     trainingData = generate_random_training_data(10, 2)
     targetStates = generate_target_from_unitary(unitary, trainingData)
