@@ -1,6 +1,7 @@
 # DQNNforQOS
 
-This repo is for learning quantum open system with deep quantum neural network.
+This repository features part of a Qiskit Advocate Mentorship Program Fall-22 program project titled: QML for reduced order density matrix time propagation qiskit-advocate/qamp-fall-22#34
+The main function of this repository is learning quantum open system with deep quantum neural network.
 
 ## Summaries & Presentations
 
@@ -12,7 +13,10 @@ This repo is for learning quantum open system with deep quantum neural network.
 - `DQNN_pennylane.ipynb`: Basic implementation of DQNN with pennylane, proposed in *Beer et al. 2020 <https://doi.org/10.1038/s41467-020-14454-2>*
 - `DQNN_qiskit.ipynb`: Basic implementation of DQNN with qiskit, proposed in *Beer et al. 2020 <https://doi.org/10.1038/s41467-020-14454-2>*
   - `class OpflowDQNN(object)` is the DQNN that utilizes `qiskit.quantum_info` to construct and update unitaries.
-  - `class CircuitDQNN(object)` is the DQNN that utilizes `qiskit.circuit` to construct channels. TODO: working progress.
+  - `class CircuitDQNN(object)` is the DQNN that utilizes `qiskit.circuit` to construct channels. *Update: Deparicated*
+- `dqnn`: Python package for DQNN simulation
+  - `opflow`: Copy of `OpflowDQNN` class in `DQNN_qiskit.ipynb`
+  - `dataset`: Copy of functions regarding dataset generation in `DQNN_qiskit.ipynb`
 
 ## Published Papers & Preprints
 
